@@ -22,7 +22,7 @@ class Data extends AppModel{
 
     /**
      * @param $json
-     * takes json data & saves to file
+     * takes json data & writes to file
      */
     public function saveDataToFile($json){
         $file = $this->getFile();
