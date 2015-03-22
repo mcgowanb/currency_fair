@@ -39,5 +39,11 @@ class DataController extends AppController{
         $this->Data->saveDataToFile($data[$id]);
     }
 
+    public function rff(){
+        $model = ClassRegistry::init('Save');
+        $model->readAndSave();
+
+    }
+
 
 }
