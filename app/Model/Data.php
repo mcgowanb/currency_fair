@@ -27,14 +27,9 @@ class Data extends AppModel{
     public function saveDataToFile($json){
         $file = $this->getFile();
 
-        if(!$this->new){
-            $json = "\n".$json;
-        }
-
         $file->flock(LOCK_EX);
         $file->fwrite($json);
         $file = null;
-
         debug($json);die;
     }
 

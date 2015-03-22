@@ -45,6 +45,9 @@ class Save extends AppModel {
         try {
             while (!$file->eof()) {
                 $data = $file->current();
+                if(empty($data)){
+                    continue;
+                }
                 $this->parseData($data);
                 $file->next();
             }
