@@ -742,8 +742,3 @@ pre {
 #url-rewriting-warning {
 	display:none;
 }
-#map-canvas {
-    width: 900px;
-    height: 500px;
-    background-color: #CCC;
-}

@@ -384,3 +384,8 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
+Configure::write('systemDetails', array(
+    'sysName' => 'Currency Fair project',
+    'sysDetails' => ' Brian McGowan CF Project v0.0.1',
+    'otherDetails' => 'Currency Fair coding challenge project'
+));

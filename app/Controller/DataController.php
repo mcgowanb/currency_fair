@@ -4,7 +4,6 @@
 
     class DataController extends AppController {
 
-        public $useTable = false;
 
         public function post_json() {
 
@@ -20,7 +19,7 @@
         }
 
         public function index() {
-
+            $this->layout = false;
             $this->render('/Elements/index');
         }
 
@@ -29,6 +28,25 @@
             $model = ClassRegistry::init('Save');
             $model->readAndSave();
 
+        }
+
+        public function sse_test(){
+            $this->layout = false;
+            header('Content-Type: text/event-stream');
+            header('Cache-Control: no-cache');
+
+            $time = date('r');
+            $data = "data: The server time is: {$time}\n\n";
+
+            $id = 3;
+            $msg = 'dgsgde';
+
+            $this->set(compact('id','msg'));
+            $this->render('/Elements/sse');
+        }
+
+        public function view(){
+            $this->render('/Elements/test');
         }
 
 

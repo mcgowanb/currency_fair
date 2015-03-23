@@ -20,50 +20,63 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php echo $cakeDescription ?>:
-		<?php echo $this->fetch('title'); ?>
-	</title>
-	<?php
-		echo $this->Html->meta('icon');
+    <?php echo $this->Html->charset(); ?>
+    <title>
+        <?php echo Configure::read('systemDetails.sysName') ?>:
+        <?php echo $this->fetch('title'); ?>
+    </title>
+    <?php
+    echo $this->Html->meta('icon');
 
-		echo $this->Html->css('cake.generic');
-        echo $this->Html->script(array(
+    echo $this->Html->css(array(
+        'bootstrap.min',
+        'bootstrap-theme.min',
+        'style',
+    ));
+
+    echo $this->Html->script(array(
             'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
-            'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization',
-            )
-        );
+            'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=visualization',
+            'scripts'
+        )
+    );
 
-
-		echo $this->fetch('meta');
-		echo $this->fetch('css');
-		echo $this->fetch('script');
-	?>
+    echo $this->fetch('meta');
+    echo $this->fetch('css');
+    echo $this->fetch('script');
+    ?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
+<div id="container">
+    <div id="header">
+        <div class="row">
+            <div class="col-sm-2">
+                <?php echo $this->Html->image('logo.png', array(
+                    'escape' => false,
+                    'alt' => 'Currency Fair'
+                )); ?>
+            </div>
+            <div class="col-sm-2" style="float: right">
+                <span id="systemClock" class="clock"></span>
+            </div>
+        </div>
+    </div>
+    <div id="content">
 
-			<?php echo $this->Session->flash(); ?>
+        <?php echo $this->Session->flash(); ?>
 
-			<?php echo $this->fetch('content'); ?>
-		</div>
-		<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
-					'http://www.cakephp.org/',
-					array('target' => '_blank', 'escape' => false, 'id' => 'cake-powered')
-				);
-			?>
-			<p>
-				<?php echo $cakeVersion; ?>
-			</p>
-		</div>
-	</div>
-	<?php echo $this->element('sql_dump'); ?>
+        <?php echo $this->fetch('content'); ?>
+    </div>
+    <div id="footer" style="text-align: right">
+        <span> <?php echo Configure::read('systemDetails.sysDetails'); ?>
+		</span><span> <?php echo(' | ' . 'About' . ' | ' . Configure::version()); ?>
+		</span>
+    </div>
+
+</div>
+<script>
+    renderTime();
+</script>
+</div>
 </body>
 </html>
