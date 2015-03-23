@@ -29,6 +29,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->meta('icon');
 
 		echo $this->Html->css('cake.generic');
+        echo $this->Html->script(array(
+            'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
+            'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization',
+            )
+        );
+
 
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
