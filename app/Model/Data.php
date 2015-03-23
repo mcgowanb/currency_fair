@@ -23,6 +23,7 @@ class Data extends AppModel{
     /**
      * @param $json
      * takes json data & writes to file
+     * @return bool
      */
     public function saveDataToFile($json){
         $file = $this->getFile();
@@ -30,7 +31,7 @@ class Data extends AppModel{
         $file->flock(LOCK_EX);
         $file->fwrite($json);
         $file = null;
-        debug($json);die;
+       return true;
     }
 
 

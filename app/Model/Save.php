@@ -11,10 +11,16 @@ App::uses('Folder', 'Utility');
 class Save extends AppModel {
     private $delay;
     private $userSummary;
+    private $uSumtTable;
+    private $lineNumber;
+    private $date;
 
     public function __construct($id = false, $table = null, $ds = null) {
-        $this->delay = 30;
+        $this->delay = 3;
         $this->alias = 'User';
+        $this->uSumTable = ClassRegistry::init('user_summary');
+        $this->lineNumber = 1;
+        $this->date = date('d_m_Y');
 
         parent::__construct($id, $table, $ds);
     }
@@ -25,9 +31,8 @@ class Save extends AppModel {
      * Called via shell script
      */
     public function readAndSave() {
-        $file = $this->loadFile();
 
-        $this->saveFileData($file);
+        $this->saveFileData();
         $file = null;
         debug('thread kill');
         die;
@@ -35,56 +40,84 @@ class Save extends AppModel {
     }
 
     /**
-     * @param $file
      * reads file data, parses & stores in database
      */
-    private function saveFileData($file) {
-        $db = $this->getDataSource();
-        $db->begin();
+    private function saveFileData() {
+        //read all lines and store in arrays, save all at end of read. store read location and sleep
+        //load from last location and read again, continue and sleep
+        while (true) { //set timer here
+            $file = $this->loadFile();
+            $file->seek($this->lineNumber);
+            $change = false;
+            $db = $this->getDataSource();
 
-        try {
             while (!$file->eof()) {
-                $data = $file->current();
-                if(empty($data)){
-                    continue;
+                $db->begin();
+                $change = true;
+
+                try {
+                    $line = $file->fgets();
+
+                    if (empty($line)) {
+                        break 1;
+                    }
+                    $this->parseData($line);
+                    $file->next();
+                    $this->lineNumber++;
+                    $db->commit();
+                } catch (Exception $e) {
+                    $db->rollback();
                 }
-                $this->parseData($data);
-                $file->next();
             }
-            $this->updateUserSummary();
-            $db->commit();
-        }
-        catch(Exception $e){
-            debug($e->getMessage());
-            $this->log($e->getMessage());
-            $db->rollback();
-        }
 
-
-//array here with totals, then return data to save.
+            if ($change) { // if only blank line needs handling here
+                $db->begin();
+                try {
+                    //more updates here as other summaries get added
+                    $this->updateUserSummary(); // delete all is failing
+                    $db->commit();
+                } catch (Exception $e) {
+                    $this->log($e->getMessage());
+                    $db->rollback();
+                }
+            }
+            unset($file);
+            unset($db);
+            sleep($this->delay);
+        }
     }
 
     /**
      * @throws Exception
      * Upates user Summary table
      */
-    private function updateUserSummary(){
-        $uSumTable = ClassRegistry::init('user_summary');
-        $uSumTable->useTable = 'user_summary';
+    private function updateUserSummary() {
+        $this->uSumTable->useTable = 'user_summary';
+
+        $delOptions = array(
+            'conditions' => array(
+                'date' => $this->date
+            )
+        );
+
+        if (!$this->uSumTable->delete($delOptions)) {
+            throw new Exception('error deleting user summary data');
+        }
+
+
         $data = array();
-        foreach ($this->userSummary as $k => $v){
+        foreach ($this->userSummary as $k => $v) {
             $record = array(
                 'date' => date('Y-m-d'),
                 'user_id' => $k,
                 'total' => $v
             );
-            $data[][$uSumTable->alias] = $record;
+            $data[][$this->uSumTable->alias] = $record;
         }
-        $uSumTable->create();
-        if(!$uSumTable->saveAll($data)){
+        $this->uSumTable->create();
+        if (!$this->uSumTable->saveAll($data)) {
             throw new Exception('error saving user summaries');
         }
-        unset($uSummary);
     }
 
     /**
@@ -97,15 +130,15 @@ class Save extends AppModel {
         $val[$this->alias] = array('id' => $d->userId);
 
         //creates element for first time
-        if(!isset($this->userSummary[$d->userId])){
+        if (!isset($this->userSummary[$d->userId])) {
             $this->userSummary[$d->userId] = 0;
         }
         $this->userSummary[$d->userId]++;
 
 
         $this->create();
-        if(!$this->save($val)){
-            throw new Exception('Error saving data');
+        if (!$this->save($val)) {
+            throw new Exception('Error saving user Id');
         }
 
     }
@@ -117,8 +150,7 @@ class Save extends AppModel {
      */
     private function loadFile() {
         $folder_path = APP . DS . 'data';
-        $date = date('d_m_Y');
-        $filePath = $folder_path . DS . $date;
+        $filePath = $folder_path . DS . $this->date;
 
         $dir = new Folder();
 
