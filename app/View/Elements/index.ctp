@@ -27,15 +27,14 @@
     function initialize() {
         var mapCanvas = document.getElementById('map-canvas');
 
-        var heatmapData = [
-            new google.maps.LatLng(54.27455, -8.47339),
-    ];
+        hmData = new google.maps.MVCArray();
+
         map = new google.maps.Map(mapCanvas, mapOptions);
         heatMap = new google.maps.visualization.HeatmapLayer({
-            "radius":10,
+            "radius":20,
             "visible":true,
             "opacity":50,
-            "data": heatmapData
+            "data": hmData
         });
         heatMap.setMap(map);
     }
@@ -48,7 +47,7 @@
             console.log(data.lng);
             document.getElementById("result").innerHTML += data.country + "<br>";
             latLng = new google.maps.LatLng(data.lat, data.lng);
-            //heatMap.data(latLng);
+            hmData.push(latLng);
         };
 
     } else {
