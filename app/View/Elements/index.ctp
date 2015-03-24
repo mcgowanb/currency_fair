@@ -1,15 +1,17 @@
 <script>
     var url =  '<?php echo $this->request->base.'/'.$this->request->params['controller']; ?>'+'/sse_test';
-    var mapOptions;
-    var startPoint;
     var heatMap;
-    var sligo;
     var map;
     var hmData;
+    var count = 0;
+    var limit = 15;
     $(document).ready(function(){
-        startPoint = new google.maps.LatLng(51.563412, 5.229492);
-        sligo = new google.maps.LatLng(54.27455, -8.47339);
-        mapOptions = {
+        initialize();
+    });
+
+    function initialize() {
+        var startPoint = new google.maps.LatLng(51.563412, 5.229492);
+        var mapOptions = {
             zoom: 4,
             mapTypeId: google.maps.MapTypeId.HYBRID,
             center: startPoint,
@@ -21,10 +23,6 @@
             scaleControl: true,
             disableDoubleClickZoom: false
         };
-        initialize();
-    });
-
-    function initialize() {
         var mapCanvas = document.getElementById('map-canvas');
 
         hmData = new google.maps.MVCArray();
@@ -42,12 +40,15 @@
     if(typeof(EventSource) !== "undefined") {
         var source = new EventSource(url);
         source.onmessage = function(event) {
+            if(count === limit){
+                document.getElementById("result").innerHTML = '';
+                count = 0;
+            }
             var data = JSON.parse(event.data);
-            console.log(data.lat);
-            console.log(data.lng);
             document.getElementById("result").innerHTML += data.country + "<br>";
             latLng = new google.maps.LatLng(data.lat, data.lng);
             hmData.push(latLng);
+            count++;
         };
 
     } else {
