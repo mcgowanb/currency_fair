@@ -31,7 +31,7 @@ class Data extends AppModel{
         $file->flock(LOCK_EX);
         $file->fwrite($json);
         $file = null;
-       return true;
+       return $this->__parseJson($json);
     }
 
 
@@ -55,6 +55,48 @@ class Data extends AppModel{
         $file = new SplFileObject($filePath, 'a');
         return $file;
 
+    }
+
+    private function __parseJson($json){
+
+        $json = json_decode($json);
+
+        $cntry = ClassRegistry::init('Countries');
+
+        $options = array(
+            'fields' => array(
+                'lat',
+                'lng',
+                'country'
+            ),
+            'conditions' => array(
+                'code' => $json->originatingCountry
+            )
+        );
+        $result = $cntry->find('first', $options);
+
+
+        $fields = array(
+            'currencyFrom' => $json->currencyFrom,
+            'currencyTo' => $json->currencyTo,
+            'sell' => $json->amountSell,
+            'buy' => $json->amountBuy,
+            'rate' => $json->rate,
+            'user' => $json->userId,
+            'time' => $json->timePlaced,
+            'msg' => 'My Message here'
+        );
+        $msg = $json->timePlaced.' from '.$result[$cntry->alias]['country'].',<br>'.
+            'Trading '.$json->currencyFrom.' to '.$json->currencyTo.',<br>'.
+            'Buy: '.$json->amountBuy.' Sell: '.$json->amountSell.' Rate: '.$json->rate.'<br>';
+
+        $data = array(
+            'lat' => $result[$cntry->alias]['lat'],
+            'lng' => $result[$cntry->alias]['lng'],
+            'msg' => $msg
+        );
+        unset($cntry);
+        return $data;
     }
 
 }

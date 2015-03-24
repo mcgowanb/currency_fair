@@ -10,9 +10,9 @@
         startPoint = new google.maps.LatLng(51.563412, 5.229492);
         sligo = new google.maps.LatLng(54.27455, -8.47339);
         mapOptions = {
-            zoom: 7,
+            zoom: 4,
             mapTypeId: google.maps.MapTypeId.HYBRID,
-            center: sligo,
+            center: startPoint,
             disableDefaultUI: true,
             scrollwheel: true,
             draggable: true,

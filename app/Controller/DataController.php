@@ -10,7 +10,8 @@
             $this->autoRender = false;
             if($this->request->is('post')) {
                 $data = $this->request->input();
-                $this->Data->saveDataToFile($data);
+                $data = $this->Data->saveDataToFile($data);
+                $this->sse_test($data);
                 echo('Posted data successfully processed');
             }
             else {
@@ -33,41 +34,43 @@
         public function sse_test() {
 
             $this->layout = false;
+            $data = $this->test();
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
 
-            $data = array(
-                'lat' => 54.271640,
-                'lng' => -8.475952,
-                'country' => 'Ireland',
-                'currencyFrom' => 'EUR',
-                'currencyTo' => 'GBP',
-                'sell' => 1000,
-                'buy' => 747.1,
-                'rate' => 0.7471,
-                'user' => 1234
-            );
+
 
             $lat = $data['lat'];
             $lng = $data['lng'];
-            $country = $data['country'];
-            $cFrom = $data['currencyFrom'];
-            $cTo = $data['currencyTo'];
-            $buy = $data['buy'];
-            $sell = $data['sell'];
-            $rate = $data['rate'];
-            $user = $data['user'];
+            $msg = $data['msg'];
 
-            $id = 3;
-            $msg = 'dgsgde';
-
-            $this->set(compact('lat', 'lng','country'));
+            $this->set(compact('lat', 'lng','msg'));
             $this->render('/Elements/sse');
         }
 
         public function view() {
 
             $this->render('/Elements/test');
+        }
+
+        public function test(){
+            $this->autoRender = false;
+            $data =  array(
+                0 => '{"userId": "111111", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "FR"}',
+                1 => '{"userId": "222222", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "GB"}',
+                2 => '{"userId": "333333", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "ES"}',
+                3 => '{"userId": "444444", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "CY"}',
+                4 => '{"userId": "555555", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "GR"}',
+                5 => '{"userId": "666666", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "IE"}',
+                6 => '{"userId": "777777", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "PL"}',
+                7 => '{"userId": "888888", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "IT"}',
+                8 => '{"userId": "999999", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "NL"}',
+                9 => '{"userId": "dddddd", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "SE"}'
+            );
+
+            $id = rand(0 , 9);
+            $res = $this->Data->saveDataToFile($data[$id]);
+            return $res;
         }
 
 
