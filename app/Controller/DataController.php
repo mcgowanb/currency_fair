@@ -19,7 +19,6 @@
         }
 
         public function index() {
-            $this->layout = false;
             $this->render('/Elements/index');
         }
 

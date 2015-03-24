@@ -1,13 +1,13 @@
 <script>
-    var mapOptions;
-    var startLatLng;
+    var myOptions;
+    var myLatlng;
     var heatMap;
     $(document).ready(function(){
-        startLatLng = new google.maps.LatLng(51.563412, 5.229492);
-        mapOptions = {
+        myLatlng = new google.maps.LatLng(40.0, 9.0);
+        myOptions = {
             zoom: 2,
             mapTypeId: google.maps.MapTypeId.HYBRID,
-            center: startLatLng,
+            center: myLatlng,
             disableDefaultUI: false,
             scrollwheel: true,
             draggable: true,
@@ -16,17 +16,17 @@
             scaleControl: true,
             disableDoubleClickZoom: false
         };
-        initialize();
+       initialize();
     });
 
     function initialize() {
         var mapCanvas = document.getElementById('map-canvas');
         var mapOptions = {
-            center: startLatLng,
-            zoom: 4,
+            center: new google.maps.LatLng(37.774546, -122.433523),
+            zoom: 13,
             mapTypeId: google.maps.MapTypeId.SATTELITE
         }
-        var map = new google.maps.Map(mapCanvas, mapOptions);
+        var map = new google.maps.Map(mapCanvas, myOptions);
 
         var pointArray = new google.maps.MVCArray(taxiData);
 
@@ -42,25 +42,6 @@
         new google.maps.LatLng(37.782551, -122.445368),
         new google.maps.LatLng(37.751266, -122.403355)
     ];
-    if(typeof(EventSource) !== "undefined") {
-        var source = new EventSource("sse_test");
-        source.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-            console.log(data.id);
-            console.log(data.msg);
-            document.getElementById("result").innerHTML += data.msg + "<br>";
-        };
-
-    } else {
-        document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
-    }
+    //google.maps.event.addDomListener(window, 'load', initialize);
 </script>
-<div class="row">
-    <div class="col-xs-8">
-        <div id="map-canvas"></div>
-    </div>
-    <div class="col-xs-4">
-        <div id="result">
-        </div>
-    </div>
-</div>
+<div id="map-canvas"></div>

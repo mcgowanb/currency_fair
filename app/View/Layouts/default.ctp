@@ -36,7 +36,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
     echo $this->Html->script(array(
             'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
-            'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=visualization',
+            'https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization',
             'scripts'
         )
     );
