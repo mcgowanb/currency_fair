@@ -19,6 +19,7 @@
         }
 
         public function index() {
+
             $this->render('/Elements/index');
         }
 
@@ -29,22 +30,43 @@
 
         }
 
-        public function sse_test(){
+        public function sse_test() {
+
             $this->layout = false;
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
 
-            $time = date('r');
-            $data = "data: The server time is: {$time}\n\n";
+            $data = array(
+                'lat' => 54.271640,
+                'lng' => -8.475952,
+                'country' => 'Ireland',
+                'currencyFrom' => 'EUR',
+                'currencyTo' => 'GBP',
+                'sell' => 1000,
+                'buy' => 747.1,
+                'rate' => 0.7471,
+                'user' => 1234
+            );
+
+            $lat = $data['lat'];
+            $lng = $data['lng'];
+            $country = $data['country'];
+            $cFrom = $data['currencyFrom'];
+            $cTo = $data['currencyTo'];
+            $buy = $data['buy'];
+            $sell = $data['sell'];
+            $rate = $data['rate'];
+            $user = $data['user'];
 
             $id = 3;
             $msg = 'dgsgde';
 
-            $this->set(compact('id','msg'));
+            $this->set(compact('lat', 'lng','country'));
             $this->render('/Elements/sse');
         }
 
-        public function view(){
+        public function view() {
+
             $this->render('/Elements/test');
         }
 

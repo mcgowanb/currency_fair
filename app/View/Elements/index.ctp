@@ -1,15 +1,19 @@
 <script>
     var url =  '<?php echo $this->request->base.'/'.$this->request->params['controller']; ?>'+'/sse_test';
     var mapOptions;
-    var startLatLng;
+    var startPoint;
     var heatMap;
+    var sligo;
+    var map;
+    var hmData;
     $(document).ready(function(){
-        startLatLng = new google.maps.LatLng(51.563412, 5.229492);
+        startPoint = new google.maps.LatLng(51.563412, 5.229492);
+        sligo = new google.maps.LatLng(54.27455, -8.47339);
         mapOptions = {
-            zoom: 2,
+            zoom: 7,
             mapTypeId: google.maps.MapTypeId.HYBRID,
-            center: startLatLng,
-            disableDefaultUI: false,
+            center: sligo,
+            disableDefaultUI: true,
             scrollwheel: true,
             draggable: true,
             navigationControl: true,
@@ -22,34 +26,29 @@
 
     function initialize() {
         var mapCanvas = document.getElementById('map-canvas');
-        var mapOptions = {
-            center: startLatLng,
-            zoom: 4,
-            mapTypeId: google.maps.MapTypeId.SATTELITE
-        }
-        var map = new google.maps.Map(mapCanvas, mapOptions);
 
-        var pointArray = new google.maps.MVCArray(taxiData);
-
+        var heatmapData = [
+            new google.maps.LatLng(54.27455, -8.47339),
+    ];
+        map = new google.maps.Map(mapCanvas, mapOptions);
         heatMap = new google.maps.visualization.HeatmapLayer({
             "radius":10,
             "visible":true,
             "opacity":50,
+            "data": heatmapData
         });
         heatMap.setMap(map);
     }
 
-    var taxiData = [
-        new google.maps.LatLng(37.782551, -122.445368),
-        new google.maps.LatLng(37.751266, -122.403355)
-    ];
     if(typeof(EventSource) !== "undefined") {
         var source = new EventSource(url);
         source.onmessage = function(event) {
             var data = JSON.parse(event.data);
-            console.log(data.id);
-            console.log(data.msg);
-            document.getElementById("result").innerHTML += data.msg + "<br>";
+            console.log(data.lat);
+            console.log(data.lng);
+            document.getElementById("result").innerHTML += data.country + "<br>";
+            latLng = new google.maps.LatLng(data.lat, data.lng);
+            //heatMap.data(latLng);
         };
 
     } else {
