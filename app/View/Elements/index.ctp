@@ -1,4 +1,5 @@
 <script>
+    var url =  '<?php echo $this->request->base.'/'.$this->request->params['controller']; ?>'+'/sse_test';
     var mapOptions;
     var startLatLng;
     var heatMap;
@@ -43,7 +44,7 @@
         new google.maps.LatLng(37.751266, -122.403355)
     ];
     if(typeof(EventSource) !== "undefined") {
-        var source = new EventSource("sse_test");
+        var source = new EventSource(url);
         source.onmessage = function(event) {
             var data = JSON.parse(event.data);
             console.log(data.id);
