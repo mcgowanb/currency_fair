@@ -11,7 +11,6 @@
             if($this->request->is('post')) {
                 $data = $this->request->input();
                 $data = $this->Data->saveDataToFile($data);
-                $this->sse_test($data);
                 echo('Posted data successfully processed');
             }
             else {
@@ -31,10 +30,15 @@
 
         }
 
+        public function eee(){
+            $this->autoRender = false;
+            $this->Data->infinite();
+        }
+
         public function sse_test() {
 
             $this->layout = false;
-            $data = $this->test();
+            $data = $this->Data->getObj();
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
 
@@ -70,6 +74,7 @@
 
             $id = rand(0 , 9);
             $res = $this->Data->saveDataToFile($data[$id]);
+            $this->log('running');
             return $res;
         }
 

@@ -10,7 +10,7 @@
     });
 
     function initialize() {
-        var startPoint = new google.maps.LatLng(51.563412, 5.229492);
+        var startPoint = new google.maps.LatLng(51.563412, 5.429492);
         var mapOptions = {
             zoom: 4,
             mapTypeId: google.maps.MapTypeId.HYBRID,
