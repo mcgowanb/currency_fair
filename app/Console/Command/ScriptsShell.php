@@ -17,6 +17,7 @@ App::uses('Data', 'Model');
 class ScriptsShell extends AppShell
 {
 
+
     function main() {
 
 //        $this->out('<warning>Fetching URL data, please wait</warning>');
@@ -29,6 +30,7 @@ class ScriptsShell extends AppShell
     }
 
     public function add(){
+        Data::initialize();
         Data::add('mystes agdgs');
     }
     public function remove(){
@@ -39,6 +41,7 @@ class ScriptsShell extends AppShell
 
         $this->out('Welcome to the Scripting Console for Currency Fair.............');
         $this->out('<warning>Starting concurrent thread...... please wait...................</warning>');
+        Data::initialize();
         Data::infinite();
 
     }

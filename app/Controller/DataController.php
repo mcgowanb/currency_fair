@@ -10,7 +10,7 @@
             $this->autoRender = false;
             if($this->request->is('post')) {
                 $data = $this->request->input();
-                $data = $this->Data->saveDataToFile($data);
+                $this->Data->saveDataToFile($data);
                 echo('Posted data successfully processed');
             }
             else {
@@ -31,14 +31,17 @@
         }
 
         public function eee(){
-            $this->autoRender = false;
-            $this->Data->infinite();
+            $this->loadModel('Save');
+            $this->Save->storeInDb();
         }
 
-        public function sse_test() {
+        public function sse() {
 
             $this->layout = false;
-            $data = $this->Data->getObj();
+
+            $this->loadModel('Read');
+            $data = $this->Read->getData();
+
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
 
@@ -54,7 +57,8 @@
 
         public function view() {
 
-            $this->render('/Elements/test');
+            $this->loadModel('Read');
+            $this->Read->getData();
         }
 
         public function test(){

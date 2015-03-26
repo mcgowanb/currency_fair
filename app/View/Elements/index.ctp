@@ -1,5 +1,5 @@
 <script>
-    var url =  '<?php echo $this->request->base.'/'.$this->request->params['controller']; ?>'+'/sse_test';
+    var url =  '<?php echo $this->request->base.'/'.$this->request->params['controller']; ?>'+'/sse';
     var heatMap;
     var map;
     var hmData;
