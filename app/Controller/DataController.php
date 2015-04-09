@@ -7,6 +7,8 @@ class DataController extends AppController {
 
     public function post_json() {
 
+        //event listener here and function, then set and render the sse page
+
         $this->autoRender = false;
         if ($this->request->is('post')) {
             $data = $this->request->input();
