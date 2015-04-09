@@ -1,86 +1,52 @@
 <?php
 
-    App::uses('AppController', 'Controller');
+App::uses('AppController', 'Controller');
 
-    class DataController extends AppController {
+class DataController extends AppController {
 
 
-        public function post_json() {
+    public function post_json() {
 
-            $this->autoRender = false;
-            if($this->request->is('post')) {
-                $data = $this->request->input();
-                $this->Data->saveDataToFile($data);
-                echo('Posted data successfully processed');
-            }
-            else {
-                throw new UnauthorizedException('Unauthorized access. Post data only');
-            }
+        $this->autoRender = false;
+        if ($this->request->is('post')) {
+            $data = $this->request->input();
+            $this->Data->saveDataToFile($data);
+            echo('Posted data successfully processed');
+        } else {
+            throw new UnauthorizedException('Unauthorized access. Post data only');
         }
-
-        public function index() {
-
-            $this->render('/Elements/index');
-        }
-
-        public function rff() {
-
-            $model = ClassRegistry::init('Save');
-            $model->readAndSave();
-
-        }
-
-        public function eee(){
-            $this->loadModel('Save');
-            $this->Save->storeInDb();
-        }
-
-        public function sse() {
-
-            $this->layout = false;
-
-            $this->loadModel('Read');
-            $data = $this->Read->getData();
-
-            header('Content-Type: text/event-stream');
-            header('Cache-Control: no-cache');
-
-
-
-            $lat = $data['lat'];
-            $lng = $data['lng'];
-            $msg = $data['msg'];
-
-            $this->set(compact('lat', 'lng','msg'));
-            $this->render('/Elements/sse');
-        }
-
-        public function view() {
-
-            $this->loadModel('Read');
-            $this->Read->getData();
-        }
-
-        public function test(){
-            $this->autoRender = false;
-            $data =  array(
-                0 => '{"userId": "111111", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "FR"}',
-                1 => '{"userId": "222222", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "GB"}',
-                2 => '{"userId": "333333", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "ES"}',
-                3 => '{"userId": "444444", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "CY"}',
-                4 => '{"userId": "555555", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "GR"}',
-                5 => '{"userId": "666666", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "IE"}',
-                6 => '{"userId": "777777", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "PL"}',
-                7 => '{"userId": "888888", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "IT"}',
-                8 => '{"userId": "999999", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "NL"}',
-                9 => '{"userId": "dddddd", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "SE"}'
-            );
-
-            $id = rand(0 , 9);
-            $res = $this->Data->saveDataToFile($data[$id]);
-            $this->log('running');
-            return $res;
-        }
-
-
     }
+
+    public function index() {
+
+        $this->render('/Elements/index');
+    }
+
+    //write file data to db
+    public function eee() {
+
+        $this->loadModel('Save');
+        $this->Save->storeInDb();
+    }
+
+    public function sse() {
+
+        $tradeData = new TradeData();
+        $this->Data->getEventManager()->attach($tradeData);
+
+        $this->layout = false;
+
+        $this->loadModel('Read');
+        $data = $this->Read->getData();
+
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+
+        $lat = $data['lat'];
+        $lng = $data['lng'];
+        $msg = $data['msg'];
+
+        $this->set(compact('lat', 'lng', 'msg'));
+        $this->render('/Elements/sse');
+    }
+}

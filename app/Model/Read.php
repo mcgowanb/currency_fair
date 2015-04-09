@@ -30,7 +30,7 @@ class Read extends AppModel{
             $line = $tab->find('first');
 
             if(!empty($line)){
-                $tab->delete($line[$tab->alias]['id']);
+//                $tab->delete($line[$tab->alias]['id']);
                 $obj = $this->__parseJson($line[$tab->alias]['string']);
                 return $obj;
             }
