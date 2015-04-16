@@ -19,12 +19,12 @@ class Data extends AppModel
      * takes json data & writes to file & database
      * @return bool
      */
-    public function saveDataToFile($json){
+    public function saveDataToFile($json) {
 
         $file = $this->getFile();
 
         $file->flock(LOCK_EX);
-        $file->fwrite($json.PHP_EOL);
+        $file->fwrite($json . PHP_EOL);
         $file = null;
 
         $lines = ClassRegistry::init('lines');
@@ -32,10 +32,9 @@ class Data extends AppModel
         $data[$lines->alias] = array(
             'string' => $json
         );
-        if($lines->save($data)){
+        if ($lines->save($data)) {
             return 'Data stored successfully - Thank you';
-        }
-        else{
+        } else {
             return 'Error saving data, please try again';
         }
     }
@@ -44,10 +43,11 @@ class Data extends AppModel
      * @return SplFileObject
      * if no file exists, create a new one and return the file object.
      */
-    private function getFile(){
-        $folder_path = APP .DS. 'data';
+    private function getFile() {
+
+        $folder_path = APP . DS . 'data';
         $date = date('d_m_Y');
-        $filePath = $folder_path.DS.$date;
+        $filePath = $folder_path . DS . $date;
 
         $dir = new Folder();
 
@@ -66,7 +66,8 @@ class Data extends AppModel
      * returns object from db of results after parsing from parse method
      * @return array
      */
-    public function getData(){
+    public function getData() {
+
         $tab = ClassRegistry::init('lines');
 
         $options = array(
@@ -74,20 +75,14 @@ class Data extends AppModel
                 'id' => 'asc'
             )
         );
+        $line = $tab->find('first', $options);
 
-        while (true){
-            $line = $tab->find('first', $options);
-
-            if(!empty($line)){
-                $tab->delete($line[$tab->alias]['id']);
-                $obj = $this->__parseJson($line[$tab->alias]['string']);
-                return $obj;
-            }
-
-            else{
-                usleep(500000);
-            }
-
+        if (!empty($line)) {
+            $tab->delete($line[$tab->alias]['id']);
+            $obj = $this->__parseJson($line[$tab->alias]['string']);
+            return $obj;
+        } else {
+            return null;
         }
 
     }
