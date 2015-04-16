@@ -13,7 +13,7 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
+date_default_timezone_set("Europe/Dublin");
 App::uses('Inflector', 'Utility');
 App::uses('CacheEngine', 'Cache');
 

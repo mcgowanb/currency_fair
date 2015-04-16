@@ -31,4 +31,37 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
+
+    protected $_date;
+
+    public function __construct($id = false, $table = null, $ds = null) {
+        $this->_date = date('d_m_Y');
+        parent::__construct($id, $table, $ds);
+    }
+
+
+    /**
+     * @return SplFileObject
+     * loads and return file object. If no file exists yet, sleep and
+     * try again.
+     */
+    protected function _loadFile($type) {
+        $folder_path = APP . DS . 'data';
+        $filePath = $folder_path . DS . $this->_date;
+
+        $dir = new Folder();
+
+        //create Folder
+        if (!is_dir($folder_path)) {
+            $dir->create($folder_path);
+        }
+
+        while (!file_exists($filePath)) {
+            usleep(500000);
+        }
+
+        $file = new SplFileObject($filePath, $type);
+        return $file;
+    }
+
 }

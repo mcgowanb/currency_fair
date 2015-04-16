@@ -12,20 +12,11 @@ App::uses('CakeEvent', 'Event');
 
 class Data extends AppModel
 {
-
-    private $new;
     public $useTable = false;
-
-    public function __construct($id = false, $table = null, $ds = null) {
-
-        parent::__construct($id, $table, $ds);
-        $this->new = false;
-    }
-
 
     /**
      * @param $json
-     * takes json data & writes to file
+     * takes json data & writes to file & database
      * @return bool
      */
     public function saveDataToFile($json){
@@ -33,15 +24,21 @@ class Data extends AppModel
         $file = $this->getFile();
 
         $file->flock(LOCK_EX);
-        $file->fwrite($json);
+        $file->fwrite($json.PHP_EOL);
         $file = null;
 
-        $obj = $this->__parseJson($json);
-        $event = new CakeEvent('Data.Event', $this, array('data' => $json));
-        $this->getEventManager()->dispatch($event);
+        $lines = ClassRegistry::init('lines');
+        $lines->create();
+        $data[$lines->alias] = array(
+            'string' => $json
+        );
+        if($lines->save($data)){
+            return 'Data stored successfully - Thank you';
+        }
+        else{
+            return 'Error saving data, please try again';
+        }
     }
-
-
 
     /**
      * @return SplFileObject
@@ -65,6 +62,40 @@ class Data extends AppModel
 
     }
 
+    /**
+     * returns object from db of results after parsing from parse method
+     * @return array
+     */
+    public function getData(){
+        $tab = ClassRegistry::init('lines');
+
+        $options = array(
+            'order' => array(
+                'id' => 'asc'
+            )
+        );
+
+        while (true){
+            $line = $tab->find('first', $options);
+
+            if(!empty($line)){
+                $tab->delete($line[$tab->alias]['id']);
+                $obj = $this->__parseJson($line[$tab->alias]['string']);
+                return $obj;
+            }
+
+            else{
+                usleep(500000);
+            }
+
+        }
+
+    }
+
+    /**
+     * @param $json
+     * @return array
+     */
     private function __parseJson($json) {
 
         $json = json_decode($json);
@@ -104,10 +135,8 @@ class Data extends AppModel
             'msg' => $msg
         );
 
+        $this->log('running from model');
         unset($cntry);
         return $data;
     }
-
-
-
 }

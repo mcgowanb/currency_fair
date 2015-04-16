@@ -28,17 +28,11 @@ class TradeData implements CakeEventListener{
         );
     }
 
-    public function fireThis($event = null){
+    public function fireThis($event){
+
         CakeLog::write('debug', 'Event listener fired');
+        $event->subject->sse($event->data);
 
-        $data = array(
-            'lat' => 'lattitude',
-            'lng' => 'longigiggi',
-            'msg' => 'my message here'
-        );
-
-        $this->set(compact('lat', 'lng', 'msg'));
-        $this->render('/Elements/sse');
     }
 
     public function parseJson($event){

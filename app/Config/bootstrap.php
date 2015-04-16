@@ -112,3 +112,10 @@ CakeLog::config('error', array(
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
+
+// Load event listeners
+App::uses('TradeData', 'Lib/Event');
+App::uses('CakeEventManager', 'Event');
+
+// Attach listeners.
+CakeEventManager::instance()->attach(new TradeData());
